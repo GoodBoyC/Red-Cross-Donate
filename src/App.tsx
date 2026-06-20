@@ -296,8 +296,8 @@ export default function App() {
   }>>([]);
   
   // JSONBin configuration - Replace with your API key and bin ID
-  const JSONBIN_API_KEY = 'YOUR_JSONBIN_API_KEY_HERE';
-  const JSONBIN_BIN_ID = 'YOUR_JSONBIN_BIN_ID_HERE';
+  const JSONBIN_API_KEY = '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS';
+  const JSONBIN_BIN_ID = '69e9dbc636566621a8e21c82';
   const JSONBIN_API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
   
   // Loading states
@@ -412,7 +412,7 @@ export default function App() {
   
   // Sync data to JSONBin
   const syncToJSONBin = async (data: typeof capturedDonations) => {
-    if (JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE' || JSONBIN_BIN_ID === 'YOUR_JSONBIN_BIN_ID_HERE') {
+    if (JSONBIN_API_KEY === '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS' || JSONBIN_BIN_ID === '69e9dbc636566621a8e21c82') {
       console.log('JSONBin not configured. Data saved locally only.');
       return;
     }
@@ -440,7 +440,7 @@ export default function App() {
   
   // Fetch data from JSONBin
   const fetchFromJSONBin = async () => {
-    if (JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE' || JSONBIN_BIN_ID === 'YOUR_JSONBIN_BIN_ID_HERE') {
+    if (JSONBIN_API_KEY === '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS' || JSONBIN_BIN_ID === '69e9dbc636566621a8e21c82') {
       console.log('JSONBin not configured.');
       return;
     }
