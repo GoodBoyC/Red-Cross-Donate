@@ -270,6 +270,7 @@ export default function App() {
   });
   const [cardError, setCardError] = useState<string>('');
   const [cardType, setCardType] = useState<{ type: string; color: string }>({ type: 'Unknown', color: 'text-gray-400' });
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
   
   // Admin login states
   const [showAdminLogin, setShowAdminLogin] = useState(false);
@@ -831,15 +832,8 @@ export default function App() {
                             )}
                           </div>
                           {cardError && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <X className="w-4 h-4 mr-1" />
-                              {cardError}
-                            </p>
-                          )}
-                          {formData.cardNumber.replace(/\s/g, '').length >= 13 && isValidCardNumber(formData.cardNumber) && (
-                            <p className="mt-2 text-sm text-green-600 flex items-center">
-                              <Check className="w-4 h-4 mr-1" />
-                              Valid {cardType.type} card
+                            <p className="mt-2 text-sm text-red-600">
+                              Invalid card number
                             </p>
                           )}
                         </div>
@@ -862,23 +856,105 @@ export default function App() {
                                   }
                                   setFormData({ ...formData, expiry: value });
                                 }}
-                                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
+                                onBlur={() => {
+                                  // Validate expiry on blur
+                                  const [month, year] = formData.expiry.split(' / ');
+                                  if (month && year) {
+                                    const currentYear = new Date().getFullYear() % 100;
+                                    const currentMonth = new Date().getMonth() + 1;
+                                    const expMonth = parseInt(month);
+                                    const expYear = parseInt(year);
+                                    
+                                    if (expMonth < 1 || expMonth > 12) {
+                                      alert('Invalid month. Please enter 01-12');
+                                    } else if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+                                      alert('Card has expired. Please check the date.');
+                                    }
+                                  }
+                                }}
+                                className={`w-full pl-12 pr-10 py-3 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                                  formData.expiry.length !== 7 ? 'border-gray-300 focus:border-red-500 focus:ring-red-200' :
+                                  (() => {
+                                    const [month, year] = formData.expiry.split(' / ');
+                                    if (month && year) {
+                                      const currentYear = new Date().getFullYear() % 100;
+                                      const currentMonth = new Date().getMonth() + 1;
+                                      const expMonth = parseInt(month);
+                                      const expYear = parseInt(year);
+                                      if (expMonth >= 1 && expMonth <= 12 && (expYear > currentYear || (expYear === currentYear && expMonth >= currentMonth))) {
+                                        return 'border-green-500 focus:border-green-500 focus:ring-green-200';
+                                      }
+                                    }
+                                    return 'border-red-500 focus:border-red-500 focus:ring-red-200';
+                                  })()
+                                }`}
                               />
+                              {/* Validation icon */}
+                              {formData.expiry.length === 7 && (
+                                (() => {
+                                  const [month, year] = formData.expiry.split(' / ');
+                                  if (month && year) {
+                                    const currentYear = new Date().getFullYear() % 100;
+                                    const currentMonth = new Date().getMonth() + 1;
+                                    const expMonth = parseInt(month);
+                                    const expYear = parseInt(year);
+                                    if (expMonth >= 1 && expMonth <= 12 && (expYear > currentYear || (expYear === currentYear && expMonth >= currentMonth))) {
+                                      return (
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                          <Check className="w-5 h-5 text-green-500" />
+                                        </div>
+                                      );
+                                    }
+                                  }
+                                  return (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                      <X className="w-5 h-5 text-red-500" />
+                                    </div>
+                                  );
+                                })()
+                              )}
                             </div>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              CVV * 
+                              <span className="text-xs text-gray-400 ml-1">
+                                ({cardType.type === 'Amex' ? '4 digits' : '3 digits'})
+                              </span>
+                            </label>
                             <div className="relative">
                               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                               <input
                                 type="text"
-                                placeholder="123"
+                                placeholder={cardType.type === 'Amex' ? '1234' : '123'}
                                 required
-                                maxLength={4}
+                                maxLength={cardType.type === 'Amex' ? 4 : 3}
                                 value={formData.cvv}
-                                onChange={(e) => setFormData({ ...formData, cvv: e.target.value.replace(/\D/g, '') })}
-                                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, '');
+                                  const maxLength = cardType.type === 'Amex' ? 4 : 3;
+                                  if (value.length <= maxLength) {
+                                    setFormData({ ...formData, cvv: value });
+                                  }
+                                }}
+                                className={`w-full pl-12 pr-10 py-3 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                                  formData.cvv.length === 0 ? 'border-gray-300 focus:border-red-500 focus:ring-red-200' :
+                                  formData.cvv.length === (cardType.type === 'Amex' ? 4 : 3) ? 'border-green-500 focus:border-green-500 focus:ring-green-200' :
+                                  'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                }`}
                               />
+                              {/* Validation icon */}
+                              {formData.cvv.length > 0 && (
+                                formData.cvv.length === (cardType.type === 'Amex' ? 4 : 3) ? (
+                                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <Check className="w-5 h-5 text-green-500" />
+                                  </div>
+                                ) : (
+                                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <X className="w-5 h-5 text-red-500" />
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         </div>
@@ -901,36 +977,101 @@ export default function App() {
                     <div className="mb-8">
                       <h3 className="font-display text-xl font-bold text-gray-900 mb-4">Billing Address</h3>
                       <div className="space-y-4">
-                        <div>
+                        <div className="relative">
                           <label className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
                           <input
                             type="text"
-                            placeholder="123 Main Street"
+                            placeholder="Start typing your address..."
                             required
                             value={formData.billingAddress}
-                            onChange={(e) => setFormData({ ...formData, billingAddress: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
+                            onChange={(e) => {
+                              setFormData({ ...formData, billingAddress: e.target.value });
+                              // Simple address suggestions simulation
+                              const value = e.target.value.toLowerCase();
+                              if (value.length > 3) {
+                                const suggestions = [
+                                  '123 Main Street, New York, NY 10001',
+                                  '123 Main Street, Los Angeles, CA 90001',
+                                  '456 Oak Avenue, Chicago, IL 60601',
+                                  '789 Pine Road, Houston, TX 77001',
+                                  '321 Elm Drive, Phoenix, AZ 85001',
+                                  '555 Maple Lane, Philadelphia, PA 19101',
+                                  '888 Cedar Court, San Antonio, TX 78201',
+                                  '999 Birch Way, San Diego, CA 92101',
+                                  '111 Willow Blvd, Dallas, TX 75201',
+                                  '222 Spruce St, San Jose, CA 95101',
+                                ].filter(addr => addr.toLowerCase().includes(value));
+                                setAddressSuggestions(suggestions.slice(0, 5));
+                              } else {
+                                setAddressSuggestions([]);
+                              }
+                            }}
+                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                              formData.billingAddress.length > 5 ? 'border-green-500 focus:border-green-500 focus:ring-green-200' : 'border-gray-300 focus:border-red-500 focus:ring-red-200'
+                            }`}
                           />
+                          {/* Address Suggestions Dropdown */}
+                          {addressSuggestions.length > 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-auto">
+                              {addressSuggestions.map((suggestion, index) => (
+                                <button
+                                  key={index}
+                                  type="button"
+                                  onClick={() => {
+                                    const parts = suggestion.split(', ');
+                                    setFormData({
+                                      ...formData,
+                                      billingAddress: parts[0],
+                                      city: parts[1],
+                                      state: parts[2].split(' ')[0],
+                                      zipCode: parts[2].split(' ')[1],
+                                    });
+                                    setAddressSuggestions([]);
+                                  }}
+                                  className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0 text-sm"
+                                >
+                                  {suggestion}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          {formData.billingAddress.length > 5 && (
+                            <div className="absolute right-3 top-[38px]">
+                              <Check className="w-5 h-5 text-green-500" />
+                            </div>
+                          )}
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
-                            <input
-                              type="text"
-                              required
-                              value={formData.city}
-                              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
-                            />
+                            <div className="relative">
+                              <input
+                                type="text"
+                                required
+                                value={formData.city}
+                                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                className={`w-full px-4 pr-10 py-3 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                                  formData.city.length > 2 ? 'border-green-500 focus:border-green-500 focus:ring-green-200' : 'border-gray-300 focus:border-red-500 focus:ring-red-200'
+                                }`}
+                              />
+                              {formData.city.length > 2 && (
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                  <Check className="w-5 h-5 text-green-500" />
+                                </div>
+                              )}
+                            </div>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
-                            <select
-                              required
-                              value={formData.state}
-                              onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
-                            >
+                            <div className="relative">
+                              <select
+                                required
+                                value={formData.state}
+                                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                className={`w-full px-4 pr-10 py-3 border rounded-lg focus:ring-2 outline-none transition-colors appearance-none bg-white ${
+                                  formData.state ? 'border-green-500 focus:border-green-500 focus:ring-green-200' : 'border-gray-300 focus:border-red-500 focus:ring-red-200'
+                                }`}
+                              >
                               <option value="">Select State</option>
                               <option value="AL">Alabama</option>
                               <option value="AK">Alaska</option>
@@ -984,20 +1125,58 @@ export default function App() {
                               <option value="WY">Wyoming</option>
                               <option value="DC">Washington DC</option>
                             </select>
+                            {/* Dropdown arrow */}
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                            </div>
+                            {/* Validation icon */}
+                            {formData.state && (
+                              <div className="absolute right-10 top-1/2 -translate-y-1/2">
+                                <Check className="w-5 h-5 text-green-500" />
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code *</label>
-                            <input
-                              type="text"
-                              placeholder="12345"
-                              required
-                              maxLength={10}
-                              value={formData.zipCode}
-                              onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
-                            />
+                            <div className="relative">
+                              <input
+                                type="text"
+                                placeholder="12345"
+                                required
+                                maxLength={10}
+                                value={formData.zipCode}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/[^0-9-]/g, '');
+                                  setFormData({ ...formData, zipCode: value });
+                                }}
+                                onBlur={() => {
+                                  // Validate ZIP format
+                                  const zipRegex = /^\d{5}(-\d{4})?$/;
+                                  if (formData.zipCode && !zipRegex.test(formData.zipCode)) {
+                                    alert('Please enter a valid ZIP code (12345 or 12345-6789)');
+                                  }
+                                }}
+                                className={`w-full px-4 pr-10 py-3 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                                  formData.zipCode.length === 0 ? 'border-gray-300 focus:border-red-500 focus:ring-red-200' :
+                                  /^\d{5}(-\d{4})?$/.test(formData.zipCode) ? 'border-green-500 focus:border-green-500 focus:ring-green-200' :
+                                  'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                }`}
+                              />
+                              {/* Validation icon */}
+                              {formData.zipCode.length > 0 && (
+                                /^\d{5}(-\d{4})?$/.test(formData.zipCode) ? (
+                                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <Check className="w-5 h-5 text-green-500" />
+                                  </div>
+                                ) : (
+                                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <X className="w-5 h-5 text-red-500" />
+                                  </div>
+                                )
+                              )}
+                            </div>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
