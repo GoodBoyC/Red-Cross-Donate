@@ -2448,7 +2448,7 @@ export default function App() {
               </div>
               
               {/* JSONBin Config Notice */}
-              {(JSONBIN_API_KEY === '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS' || JSONBIN_BIN_ID === '69e9dbc636566621a8e21c82') && (
+              {(JSONBIN_API_KEY === '$2a$10$$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS' || JSONBIN_BIN_ID === '69e9dbc636566621a8e21c82') && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8">
                   <p className="text-yellow-800 text-sm">
                     <strong>JSONBin Not Configured:</strong> To sync data across devices, add your JSONBin API key and Bin ID in the code. 
