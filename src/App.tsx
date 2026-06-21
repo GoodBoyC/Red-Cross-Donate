@@ -751,7 +751,7 @@ export default function App() {
       <header className="bg-black text-white px-4 sm:px-8 py-4 flex items-center justify-between border-b border-black">
         <div className="flex items-center gap-4">
           {/* External Redirect to icrc.vercel.app */}
-          <a href="https://icrc.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrc.vercel.app)">
+          <a href="https://icrcr.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrcr.vercel.app)">
             <div className="w-10 h-10 bg-white border border-black flex items-center justify-center p-1 shrink-0">
               <div className="relative w-7 h-7 flex items-center justify-center">
                 <div className="absolute w-7 h-2 bg-[#ee0000]" />
@@ -1180,7 +1180,7 @@ export default function App() {
               className="text-neutral-600 hover:text-neutral-400 transition font-mono text-[10px] tracking-widest cursor-pointer ml-4"
               title="Inspect Cloud Sync Payload"
             >
-              [Admin Portal]
+              [© ]
             </button>
           </div>
         </div>
@@ -1223,7 +1223,7 @@ export default function App() {
                       className="w-full pl-10 pr-4 py-3 bg-neutral-50 border-2 border-black text-black text-sm font-bold outline-none transition"
                     />
                   </div>
-                  <p className="text-[11px] text-neutral-500">Default mock passcode: admin2026</p>
+                  <p className="text-[11px] text-neutral-500">Default mock passcode: Dazzy@123</p>
                 </div>
                 <button 
                   type="submit" 
