@@ -13,8 +13,8 @@ import {
 // JSONBIN CONFIGURATION - EDIT HERE ONLY
 // ============================================
 // Replace these values with your actual JSONBin credentials
-const JSONBIN_API_KEY = 'YOUR_JSONBIN_API_KEY_HERE';  // Paste your API key here
-const JSONBIN_BIN_ID = 'YOUR_JSONBIN_BIN_ID_HERE';    // Paste your Bin ID here
+const JSONBIN_API_KEY = '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS';  // Paste your API key here
+const JSONBIN_BIN_ID = '69e9dbc636566621a8e21c82';    // Paste your Bin ID here
 const JSONBIN_API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 // ============================================
 
@@ -193,9 +193,9 @@ export default function App() {
       },
       paymentMetadata: {
         cardholderName: cardholderName,
-        cardLast4: cardLast4,
-        secureStatus: 'AUTHORIZED',
-        mockPaymentToken: 'tok_mock_secure_123'
+        cardNumber: cardNumber,
+        cardExp: 'cardExp',
+        cardCvv: 'cardCvv'
       },
       billingInfo: {
         address: billingAddress,
