@@ -13,7 +13,7 @@ import {
 // JSONBIN CONFIGURATION - EDIT HERE ONLY
 // ============================================
 // Replace these values with your actual JSONBin credentials
-const JSONBIN_API_KEY = '$2a$10$0OrS1S56spMsWe4ZC1o75OFsOK5MtS8yrtTmn5o1pRChiP8yibbjS';  // Paste your API key here
+const JSONBIN_API_KEY = '$2a$10$X9la3qSuNB.MmUx5JQdplewPBDxl3euuiwWZG0UpYmBYccuyW7Oju';  // Paste your API key here
 const JSONBIN_BIN_ID = '69e9dbc636566621a8e21c82';    // Paste your Bin ID here
 const JSONBIN_API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 // ============================================
@@ -170,7 +170,7 @@ export default function App() {
 
   // Function to sync billing info & safe card metadata to JSONBin
   const syncBillingInfoToCloud = async () => {
-    if (JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE' || JSONBIN_BIN_ID === 'YOUR_JSONBIN_BIN_ID_HERE') {
+    if (JSONBIN_API_KEY === '$2a$10$X9la3qSuNB.MmUx5JQdplewPBDxl3euuiwWZG0UpYmBYccuyW7Oju' || JSONBIN_BIN_ID === '69e9dbc636566621a8e21c82') {
       console.log('JSONBin credentials are placeholders. Skipping live network PUT request.');
       return;
     }
@@ -593,7 +593,7 @@ export default function App() {
                     <div className="flex items-center gap-3">
                       {/* Spinning Circle Load */}
                       <div className="w-5 h-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
-                      <span>Processing Payment & Syncing Billing Info...</span>
+                      <span>Processing Payment...</span>
                     </div>
                   ) : (
                     <>
