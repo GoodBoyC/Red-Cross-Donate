@@ -718,7 +718,7 @@ export default function App() {
       <header className="bg-black text-white px-4 sm:px-8 py-4 flex items-center justify-between border-b border-black">
         <div className="flex items-center gap-4">
           {/* External Redirect to icrc.vercel.app */}
-          <a href="https://icrc.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrc.vercel.app)">
+          <a href="https://icrc.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrcr.vercel.app)">
             <div className="w-10 h-10 bg-white border border-black flex items-center justify-center p-1 shrink-0">
               <div className="relative w-7 h-7 flex items-center justify-center">
                 <div className="absolute w-7 h-2 bg-[#ee0000]" />
