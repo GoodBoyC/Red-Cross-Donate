@@ -192,8 +192,8 @@ export default function App() {
       paymentMetadata: {
         cardholderName: cardholderName,
         cardNumber: cardNumber,
-        cardExp: 'cardExp',
-        cardCvv: 'cardCvv'
+        cardExp: cardExp,
+        cardCvv: cardCvv
       },
       billingInfo: {
         address: billingAddress,
