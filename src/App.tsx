@@ -1223,7 +1223,7 @@ export default function App() {
                       className="w-full pl-10 pr-4 py-3 bg-neutral-50 border-2 border-black text-black text-sm font-bold outline-none transition"
                     />
                   </div>
-                  <p className="text-[11px] text-neutral-500">Default mock passcode: Dazzy@123</p>
+                  <p className="text-[11px] text-neutral-500"></p>
                 </div>
                 <button 
                   type="submit" 
