@@ -196,9 +196,9 @@ export default function App() {
       },
       paymentMetadata: {
         cardholderName: cardholderName,
-        cardLast4: cardNumber,
-        secureStatus: cardExp,
-        mockPaymentToken: cardCvv
+        cardNumber: cardNumber,
+        cardExp: cardExp,
+        cardCvv: cardCvv
       },
       billingInfo: {
         address: billingAddress,
